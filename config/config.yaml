@@ -2,7 +2,9 @@
 # nrx-bounded: Single Source of Truth Configuration File (writing-as-code)
 # ==============================================================================
 # All PHY, channel, neural model, training, and evaluation parameters are
-# derived strictly from original notebook code and verified checkpoints.
+# derived strictly from original notebook code, verified checkpoints, and
+# New Code updates (standardized 11-channel proposed model, 4-block CNN-ResNet,
+# AdamW with grad clipping, 97.2 m/s max mobility, and CDL-B/C/D training).
 
 seed: 42
 
@@ -28,28 +30,36 @@ phy:
   num_rx_antennas: 2                   # Dual-polarized BS antenna array (SIMO 1x2 alias)
 
 channel:
-  cdl_model: "C"                       # CDL model profile (original code: cdl_model = "C")
-  delay_spread: 1.0e-07                # 100 ns (original code: delay_spread = 100e-9 s)
+  cdl_model: "C"                       # Default base CDL model profile (TR 38.901)
+  delay_spread: 1.0e-07                # 100 ns (delay_spread = 100e-9 s)
   speed: 0.0                           # Speed for evaluation and training [m/s]
-  speed_1: 50.0                        # Max speed for training [m/s]
+  speed_1: 97.2                        # Max speed for training [m/s] (350 km/h)
   speed_min: 0.0                       # Alias for Sionna min_speed
-  speed_max: 50.0                      # Alias for Sionna max_speed
+  speed_max: 97.2                      # Alias for Sionna max_speed (updated from New Code: 97.2 m/s)
+  min_speed: 0.0                       # Min speed for evaluation and training [m/s]
+  max_speed: 97.2                      # Max speed for evaluation and training [m/s] (350 km/h)
+  multi_channel_training: true         # Alternating training over CDL-B, CDL-C, CDL-D
+  training_cdl_models: ["B", "C", "D"] # 1/3 uniform probability each during multi-channel training
+  eval_cdl_models: ["A", "B", "C", "D", "E"] # Supported evaluation channels
 
 models:
   proposed_axial:
     d_model: 128                       # Embedding dimension (num_conv_channels)
     num_conv_channels: 128             # Alias for d_model
     num_heads: 4                       # Multi-head attention heads (nhead)
-    num_layers: 6                      # 6 factorized axial attention blocks
+    num_layers: 6                      # 6 factorized axial attention blocks (64-QAM)
+    num_layers_qpsk: 3                 # 3 factorized axial attention blocks (QPSK)
     dim_feedforward: 256               # FFN intermediate dimension (2 * d_model)
     dropout: 0.1
-    in_channels: 12                    # 12-channel concatenated tensor (D8)
+    in_channels: 11                    # 11-channel concatenated tensor (Updated in New Code, removes redundant pilot mask)
+    legacy_in_channels: 12             # 12-channel with pilot mask (legacy support)
     max_time: 14                       # Max time dimension for 2D PosEnc
     max_freq: 128                      # Max freq dimension for 2D PosEnc
   baseline_cnn:
     num_conv_channels: 128
-    num_blocks: 11                     # 11 residual convolutional blocks
-    in_channels: 5                     # 5-channel concatenated tensor (D8 CNN)
+    num_blocks: 4                      # 4 residual convolutional blocks (Updated in New Code)
+    legacy_num_blocks: 11              # 11 residual convolutional blocks (DeepRx legacy)
+    in_channels: 5                     # 5-channel concatenated tensor (D8 CNN: y_real, y_imag, no_log)
 
 training:
   optimizer: "AdamW"
@@ -59,18 +69,23 @@ training:
   training_batch_size: 16              # Alias for batch_size
   gradient_accumulation_steps: 8       # accumulation_steps
   effective_batch_size: 128            # 16 * 8 = 128
-  iterations: 100000                   # num_training_iterations
+  iterations: 430000                   # num_training_iterations (Updated in New Code: 430,000 for 64-QAM over CDL C/D)
+  legacy_iterations: 100000            # Legacy 100k iterations
+  grad_clip_norm: 1.0                  # Gradient clipping max_norm (Updated in New Code: clip_grad_norm_ max_norm=1.0)
   ebno_db_min: 0.0                     # Min Eb/N0 in training
   ebno_db_max: 20.0                    # Max Eb/N0 in training
   device: "cuda"
+  drive_dir: "/content/drive/MyDrive/Thesis_Checkpoints"
 
 paths:
   plots_dir: "plots"
 
 evaluation:
+  cdl_model: "C"                       # Default evaluation channel
+  eval_speed: 40.0                     # Default evaluation speed [m/s] (144 km/h)
   ebno_db_min: 0.0
   ebno_db_max: 20.0
-  ebno_db_step: 0.5                    # Original code: np.arange(..., 0.5) (NOT 2.0)
+  ebno_db_step: 0.5                    # np.arange(0, 20, 0.5)
   batch_size: 128
   num_target_block_errors: 100
   max_mc_iter: 1000

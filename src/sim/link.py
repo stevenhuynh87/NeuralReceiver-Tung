@@ -423,6 +423,31 @@ def batch_generator(
                 H = H[:, 0, :, 0, :, :, :]
 
             # Signal + noise
+            from src.rx.classical import _get_qam_cache, _get_active_subcarrier_indices
+
+            bps = link_config.num_bits_per_symbol
+            pts, _, _ = _get_qam_cache(bps, device)
+            b_grouped = b.view(batch_size, -1, bps).long()
+            powers = 2 ** torch.arange(bps - 1, -1, -1, device=device).long()
+            indices = torch.sum(b_grouped * powers, dim=-1)
+            s_data = pts[indices]
+
+            active_sc = _get_active_subcarrier_indices(link_config)
+            pilot_syms = set(link_config.pilot_ofdm_symbol_indices)
+            data_syms = [t for t in range(link_config.num_ofdm_symbols) if t not in pilot_syms]
+
+            X_grid = torch.zeros(
+                (batch_size, 1, link_config.num_ofdm_symbols, link_config.fft_size),
+                dtype=torch.complex64,
+                device=device,
+            )
+            for p_idx in pilot_syms:
+                X_grid[:, 0, p_idx, active_sc] = 1.0 + 0j
+
+            s_data_reshaped = s_data.view(batch_size, len(data_syms), len(active_sc))
+            for i, d_idx in enumerate(data_syms):
+                X_grid[:, 0, d_idx, active_sc] = s_data_reshaped[:, i, :]
+
             noise_r = torch.randn(
                 (batch_size, link_config.num_rx_ant, link_config.num_ofdm_symbols, link_config.fft_size),
                 device=device,
@@ -433,7 +458,7 @@ def batch_generator(
             ) * math.sqrt(N0 / 2.0)
             noise = torch.complex(noise_r, noise_i)
 
-            Y = H[:, :, 0, :, :] + noise
+            Y = H[:, :, 0, :, :] * X_grid + noise
             X_pilot = torch.ones((1, 1, link_config.num_pilot_symbols), dtype=torch.complex64, device=device)
 
             return BatchData(b=b, Y=Y, X_pilot=X_pilot, N0=N0, H=H)
