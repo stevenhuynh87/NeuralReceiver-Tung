@@ -19,6 +19,12 @@ from src.models.axial import (
     ProposedNeuralReceiver,
     NeuralReceiver_proposed,
 )
+from src.models.gate import (
+    GateMLP,
+    GatedNeuralReceiver,
+    combine_llr,
+    physics_ramp,
+)
 
 __all__ = [
     "CNNNeuralReceiver",
@@ -31,4 +37,8 @@ __all__ = [
     "PositionalEncoding2D",
     "ProposedNeuralReceiver",
     "NeuralReceiver_proposed",
+    "GateMLP",
+    "GatedNeuralReceiver",
+    "combine_llr",
+    "physics_ramp",
 ]

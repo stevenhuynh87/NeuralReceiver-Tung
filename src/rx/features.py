@@ -230,3 +230,91 @@ def rho_hat(
     # Clamp in [-1.0, 1.0]
     rho_clamped = torch.clamp(rho, min=-1.0, max=1.0)
     return rho_clamped
+
+
+def gate_features(
+    y: torch.Tensor,
+    h_ls: torch.Tensor,
+    l_N: torch.Tensor,
+    no: Union[float, torch.Tensor],
+    pilot_indices: Tuple[int, int] = (2, 11),
+    eps: float = 1e-8,
+) -> torch.Tensor:
+    """Extract 5-dimensional gating feature vector phi for GateMLP.
+
+    Feature vector components:
+    1. log10(N0): Noise variance in log10 scale.
+    2. rho_hat: Doppler temporal autocorrelation in [-1.0, 1.0].
+    3. r_hat: Normalized pilot residual error.
+    4. mean_abs_llr: Mean absolute LLR magnitude E[|l_N|].
+    5. llr_entropy: Mean binary Shannon entropy H(l_N).
+
+    Parameters
+    ----------
+    y : torch.Tensor
+        Received signal grid of shape (B, Rx, T, F) or (B, T, F).
+    h_ls : torch.Tensor
+        LS channel estimate of shape (B, Rx, T, F) or (B, T, F).
+    l_N : torch.Tensor
+        Neural receiver LLRs of shape (B, T, F, K) or (B, ...).
+    no : Union[float, torch.Tensor]
+        Noise variance.
+    pilot_indices : Tuple[int, int], default=(2, 11)
+        OFDM symbol indices carrying pilots.
+    eps : float, default=1e-8
+        Numerical stability epsilon.
+
+    Returns
+    -------
+    torch.Tensor
+        Tensor of shape (B, 5) containing features [log_N0, rho_hat, r_hat, mean_abs_llr, llr_entropy].
+    """
+    batch_size = l_N.shape[0]
+
+    # 1. log10(N0)
+    if isinstance(no, torch.Tensor):
+        no_tensor = no.to(device=l_N.device, dtype=torch.float32).reshape(-1)
+        if no_tensor.numel() == 1:
+            no_tensor = no_tensor.expand(batch_size)
+    else:
+        no_tensor = torch.full((batch_size,), float(no), device=l_N.device, dtype=torch.float32)
+    feat_log_n0 = torch.log10(torch.clamp(no_tensor, min=1e-12))
+
+    # 2. rho_hat
+    feat_rho_hat = rho_hat(h_ls, no_tensor, pilot_indices=pilot_indices)
+
+    # 3. Normalized pilot residual r_hat
+    # Extract pilot symbols from y and h_ls
+    if y.ndim == 4:
+        p0_idx, p1_idx = pilot_indices
+        y_p = y[:, :, [p0_idx, p1_idx], :]
+        h_p = h_ls[:, :, [p0_idx, p1_idx], :]
+        diff_p = y_p - h_p
+        # Residual power normalized by total received pilot power
+        res_power = torch.mean(torch.abs(diff_p) ** 2, dim=(1, 2, 3))
+        sig_power = torch.mean(torch.abs(y_p) ** 2, dim=(1, 2, 3)) + eps
+        feat_r_hat = torch.clamp(res_power / sig_power, min=0.0, max=10.0)
+    else:
+        feat_r_hat = torch.zeros(batch_size, device=l_N.device, dtype=torch.float32)
+
+    # 4. mean_abs_llr: E[|l_N|]
+    l_N_flat = l_N.reshape(batch_size, -1)
+    feat_mean_abs_llr = torch.mean(torch.abs(l_N_flat), dim=-1)
+
+    # 5. llr_entropy: H(l_N) = -p*log2(p) - (1-p)*log2(1-p)
+    # p = sigmoid(l_N)
+    p = torch.sigmoid(l_N_flat)
+    p_clamped = torch.clamp(p, min=eps, max=1.0 - eps)
+    binary_entropy = -(p_clamped * torch.log2(p_clamped) + (1.0 - p_clamped) * torch.log2(1.0 - p_clamped))
+    feat_entropy = torch.mean(binary_entropy, dim=-1)
+
+    # Stack into [B, 5]
+    phi = torch.stack([
+        feat_log_n0,
+        feat_rho_hat,
+        feat_r_hat,
+        feat_mean_abs_llr,
+        feat_entropy,
+    ], dim=1)
+
+    return phi

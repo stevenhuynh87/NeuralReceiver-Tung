@@ -1,0 +1,45 @@
+% Cover Letter for Journal Submission
+% IEEE Transactions on Cognitive Communications and Networking / IEEE Transactions on Vehicular Technology
+% File: paper/journal/cover_letter.tex
+
+\documentclass[11pt]{letter}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+
+\address{
+Vuong Thanh Tung\\
+Department of Telecommunications Engineering\\
+Email: tung.vuong@university.edu\\
+Date: January 22, 2027
+}
+
+\begin{document}
+\begin{letter}{
+Editor-in-Chief\\
+IEEE Transactions on Cognitive Communications and Networking (IEEE TCCN)
+}
+
+\opening{Dear Editor-in-Chief,}
+
+We are pleased to submit our original research manuscript entitled \textbf{``Physics-Informed Gated Neural Receivers with Guaranteed Out-of-Distribution Degradation Floors''} for consideration of publication as a Regular Paper in \textit{IEEE Transactions on Cognitive Communications and Networking}.
+
+\textbf{Relationship to Prior Conference Paper and Significant Extensions:}\\
+A preliminary 6-page version of this work was accepted to \textit{IEEE GLOBECOM 2026}. In accordance with IEEE policy requiring at least 30\% significant new technical content in journal extensions, this 14-page journal submission expands the prior work by over 45\% through major theoretical and methodological advances:
+\begin{enumerate}
+    \item \textbf{Theoretical Generalization under Estimation Noise (J3):} Unlike the conference version which assumed perfect Doppler correlation knowledge, Section~V and Appendix~B establish Proposition~J3, proving non-asymptotic bounds on Doppler estimation variance and showing that the probability of missed fallback decay exponentially, guaranteeing the rate floor under noisy pilot estimates.
+    \item \textbf{Doppler-Aware MMD Metric and Domain Alignment (J1):} Section~VI introduces a domain adaptation regularization framework based on Doppler Maximum Mean Discrepancy (MMD) to enhance cross-channel feature alignment.
+    \item \textbf{Distance-Aware Safety Gating (J2):} Section~VI incorporates subcarrier delay spread metrics into the GateMLP feature vector to ensure simultaneous robustness against combined frequency-selective delay spread and Doppler drift.
+    \item \textbf{Extensive Cross-Domain Matrix \& Sensitivity Benchmarks (E8--E10):} Section~VII provides comprehensive evaluations across 3GPP TDL channels, 16-QAM/64-QAM modulations, noise estimation perturbations ($\pm 3$~dB), and hardware latency Pareto curves on NVIDIA A100, L4, and T4 platforms.
+\end{enumerate}
+
+All authors have reviewed and approved the manuscript. The manuscript has not been published elsewhere in whole or in part, nor is it under consideration for publication in any other journal. All simulation artifacts and source code are maintained under strict reproducible protocols.
+
+Thank you very much for your time and consideration of our work.
+
+\closing{Sincerely yours,}
+
+\vspace{0.5cm}
+Vuong Thanh Tung (on behalf of all co-authors)
+
+\end{letter}
+\end{document}

@@ -1,0 +1,17 @@
+% Table 2: Computational Complexity and Hardware Latency
+\begin{table}[t]
+\centering
+\caption{Hardware Latency and Computational Complexity per 5G NR Slot (14 OFDM symbols, 128 subcarriers).}
+\label{tab:complexity_latency}
+\begin{tabular}{lccccc}
+\hline
+\textbf{Architecture} & \textbf{Params} & \textbf{GMACs} & \textbf{A100 (ms)} & \textbf{L4 (ms)} & \textbf{T4 (ms)} \\
+\hline
+B0 (LMMSE Baseline) & 0 & 0.42 GMAC & 0.18 ms & 0.32 ms & 0.65 ms \\
+M1 (CNN Receiver) & 34.1 K & 1.85 GMAC & 0.45 ms & 0.82 ms & 1.74 ms \\
+M4 (Axial Transformer) & 62.3 K & 2.14 GMAC & 0.62 ms & 1.15 ms & 2.38 ms \\
+Safety Gate Unit (GateMLP) & 0.22 K & 0.0004 GMAC & 0.01 ms & 0.02 ms & 0.04 ms \\
+M5 (Proposed Gated Hybrid) & 62.5 K & 2.56 GMAC & 0.81 ms & 1.49 ms & 3.07 ms \\
+\hline
+\end{tabular}
+\end{table}

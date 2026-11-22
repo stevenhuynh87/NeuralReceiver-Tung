@@ -1,0 +1,128 @@
+\documentclass[journal,onecolumn]{IEEEtran}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{amsthm}
+\usepackage{bm}
+
+\newtheorem{proposition}{Proposition}
+\newtheorem{remark}{Remark}
+
+\begin{document}
+
+\title{Proposition 1: Provable BMD-Rate Floor via LLR-Domain Convex Gating}
+\author{Vuong Thanh Tung}
+\maketitle
+
+\section{System Setting and Notation}
+
+Let $b \in \{0, 1\}$ denote a transmitted coded bit with uniform prior $\Pr(b=0) = \Pr(b=1) = 1/2$. In an OFDM resource element carrying an $m$-bit constellation (e.g., $m=6$ for 64-QAM), the true bit posterior is parameterized by the log-likelihood ratio (LLR):
+\begin{equation}
+\ell = \ln \frac{\Pr(b=0 \mid \bm{y})}{\Pr(b=1 \mid \bm{y})}.
+\end{equation}
+The binary cross-entropy (BCE) loss incurred by a candidate LLR $\ell \in \mathbb{R}$ with respect to the ground-truth bit $b \in \{0, 1\}$ is defined in base 2:
+\begin{equation}
+\label{eq:bce_def}
+\mathcal{L}(\ell; b) \triangleq \log_2 \left( 1 + e^{-(1 - 2b)\ell} \right).
+\end{equation}
+The achievable Bit-Metric Decoding (BMD) rate for an $m$-bit symbol $\bm{b} \in \{0, 1\}^m$ and its corresponding LLR vector $\bm{\ell} \in \mathbb{R}^m$ is given by:
+\begin{equation}
+\label{eq:bmd_def}
+R_{\text{BMD}}(\bm{\ell}) \triangleq 1 - \frac{1}{m} \sum_{k=1}^m \mathbb{E}_{b_k, \bm{y}} \left[ \mathcal{L}(\ell_k; b_k) \right].
+\end{equation}
+
+\section{Proposition Formulation and Proof}
+
+\begin{proposition}[BMD-Rate Floor Guarantee]
+\label{prop:convex_floor}
+Let $\ell^A \in \mathbb{R}$ denote the analytical baseline LLR (e.g., computed via LMMSE equalization followed by max-log demapping). Let $\ell^N \in \mathbb{R}$ denote the LLR computed by an unconstrained neural receiver. Define the clipped neural LLR:
+\begin{equation}
+\bar{\ell}^N \triangleq \text{clip}_\Lambda (\ell^N) = \min(\max(\ell^N, -\Lambda), \Lambda), \quad \Lambda > 0.
+\end{equation}
+Let $g \in [0, 1]$ be a measurable gating coefficient. Define the hybrid gated LLR as the convex combination:
+\begin{equation}
+\ell^H \triangleq g \ell^A + (1 - g) \bar{\ell}^N.
+\end{equation}
+Then, the following properties hold:
+\begin{enumerate}
+    \item[(a)] \textbf{Pointwise Loss Bound:} For any realization $(b, \ell^A, \ell^N, g)$,
+    \begin{equation}
+    \label{eq:pointwise_bound}
+    \mathcal{L}(\ell^H; b) \le g \mathcal{L}(\ell^A; b) + (1 - g) \mathcal{L}(\bar{\ell}^N; b).
+    \end{equation}
+    \item[(b)] \textbf{Global BMD-Rate Lower Bound:} The expected BMD rate of the hybrid receiver satisfies:
+    \begin{equation}
+    \label{eq:rate_floor}
+    R_{\text{BMD}}(\bm{\ell}^H) \ge R_{\text{BMD}}(\bm{\ell}^A) - \kappa_\Lambda \mathbb{E}[1 - g],
+    \end{equation}
+    where $\kappa_\Lambda \triangleq \log_2(1 + e^\Lambda)$ is a strictly positive constant depending solely on the clipping threshold $\Lambda$.
+    \item[(c)] \textbf{Active Safety Region Identity:} On any realization where $g = 1$, we have $\ell^H = \ell^A$ and:
+    \begin{equation}
+    \mathcal{L}(\ell^H; b) = \mathcal{L}(\ell^A; b), \quad \forall b \in \{0, 1\}.
+    \end{equation}
+    \item[(d)] \textbf{Constant Gate Bound:} If $g \in [0, 1]$ is fixed independently of the channel realization, then:
+    \begin{equation}
+    R_{\text{BMD}}(\bm{\ell}^H) \ge g R_{\text{BMD}}(\bm{\ell}^A) + (1 - g) R_{\text{BMD}}(\bar{\bm{\ell}}^N).
+    \end{equation}
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+\textbf{Part (a):} We examine the convexity of the BCE function $\mathcal{L}(\ell; b)$. Computing the first and second derivatives with respect to $\ell$:
+\begin{align}
+\frac{\partial \mathcal{L}(\ell; b)}{\partial \ell} &= -\frac{1 - 2b}{\ln 2} \frac{e^{-(1 - 2b)\ell}}{1 + e^{-(1 - 2b)\ell}}, \\
+\frac{\partial^2 \mathcal{L}(\ell; b)}{\partial \ell^2} &= \frac{(1 - 2b)^2}{\ln 2} \frac{e^{-(1 - 2b)\ell}}{\left(1 + e^{-(1 - 2b)\ell}\right)^2}.
+\end{align}
+Since $(1 - 2b)^2 = 1$ for all $b \in \{0, 1\}$ and the exponential function satisfies $e^u > 0$ for all $u \in \mathbb{R}$, we have:
+\begin{equation}
+\frac{\partial^2 \mathcal{L}(\ell; b)}{\partial \ell^2} > 0, \quad \forall \ell \in \mathbb{R}.
+\end{equation}
+Thus, $\mathcal{L}(\ell; b)$ is strictly convex in $\ell$. Applying Jensen's inequality to the convex combination $\ell^H = g \ell^A + (1 - g) \bar{\ell}^N$ with $g \in [0, 1]$ directly yields Part (a):
+\begin{equation}
+\mathcal{L}(g \ell^A + (1 - g) \bar{\ell}^N; b) \le g \mathcal{L}(\ell^A; b) + (1 - g) \mathcal{L}(\bar{\ell}^N; b).
+\end{equation}
+
+\textbf{Part (b):} From Part (a), we rewrite:
+\begin{equation}
+\mathcal{L}(\ell^H; b) \le \mathcal{L}(\ell^A; b) + (1 - g) \left( \mathcal{L}(\bar{\ell}^N; b) - \mathcal{L}(\ell^A; b) \right).
+\end{equation}
+Because $\mathcal{L}(\ell^A; b) \ge 0$ for all LLRs, and since $|\bar{\ell}^N| \le \Lambda$, the maximum possible BCE loss for the clipped neural LLR is:
+\begin{equation}
+\mathcal{L}(\bar{\ell}^N; b) = \log_2\left(1 + e^{-(1-2b)\bar{\ell}^N}\right) \le \log_2\left(1 + e^{\Lambda}\right) = \kappa_\Lambda.
+\end{equation}
+Therefore, $\mathcal{L}(\bar{\ell}^N; b) - \mathcal{L}(\ell^A; b) \le \kappa_\Lambda$. Substituting this into the inequality:
+\begin{equation}
+\mathcal{L}(\ell^H; b) \le \mathcal{L}(\ell^A; b) + (1 - g) \kappa_\Lambda.
+\end{equation}
+Taking the mathematical expectation over bits $b_k$ and channel observations $\bm{y}$, and summing over bit indices $k=1, \dots, m$:
+\begin{equation}
+\frac{1}{m} \sum_{k=1}^m \mathbb{E} \left[ \mathcal{L}(\ell^H_k; b_k) \right] \le \frac{1}{m} \sum_{k=1}^m \mathbb{E} \left[ \mathcal{L}(\ell^A_k; b_k) \right] + \kappa_\Lambda \mathbb{E}[1 - g].
+\end{equation}
+Subtracting both sides from 1 in accordance with the BMD-rate definition (\ref{eq:bmd_def}) reverses the inequality:
+\begin{equation}
+R_{\text{BMD}}(\bm{\ell}^H) \ge R_{\text{BMD}}(\bm{\ell}^A) - \kappa_\Lambda \mathbb{E}[1 - g].
+\end{equation}
+This establishes Part (b).
+
+\textbf{Part (c):} Setting $g = 1$ yields $\ell^H = 1 \cdot \ell^A + 0 \cdot \bar{\ell}^N = \ell^A$. Hence $\mathcal{L}(\ell^H; b) = \mathcal{L}(\ell^A; b)$ identically.
+
+\textbf{Part (d):} When $g \in [0, 1]$ is a deterministic constant, linearity of expectation applied to (\ref{eq:pointwise_bound}) gives:
+\begin{equation}
+\mathbb{E}[\mathcal{L}(\ell^H; b)] \le g \mathbb{E}[\mathcal{L}(\ell^A; b)] + (1 - g) \mathbb{E}[\mathcal{L}(\bar{\ell}^N; b)].
+\end{equation}
+Normalizing and subtracting from 1 gives $R_{\text{BMD}}(\bm{\ell}^H) \ge g R_{\text{BMD}}(\bm{\ell}^A) + (1 - g) R_{\text{BMD}}(\bar{\bm{\ell}}^N)$.
+\end{proof}
+
+\section{Theoretical Limitations and Operational Scope}
+
+\begin{remark}[Information-Theoretic BMD Rate vs. Block Error Rate]
+Proposition \ref{prop:convex_floor} establishes a mathematical lower bound on the mutual information rate under bit-metric decoding ($R_{\text{BMD}}$). It does not provide an algebraic guarantee on the uncoded or coded Block Error Rate (BLER). In practical wireless receivers, BLER is dictated by non-linear LDPC belief propagation thresholds and error floors. While a higher $R_{\text{BMD}}$ strictly correlates with superior error-correction capacity, Proposition \ref{prop:convex_floor} must not be construed as a uniform BLER bound.
+\end{remark}
+
+\begin{remark}[Conservatism of the Analytical Constant $\kappa_\Lambda$]
+The parameter $\kappa_\Lambda = \log_2(1 + e^\Lambda)$ is derived via worst-case scalar bounding ($|\bar{\ell}^N| \le \Lambda$). For practical values such as $\Lambda = 12$, $\kappa_\Lambda \approx 17.31$ bits/symbol, which serves as a rigorous existential guarantee against catastrophic unbounded divergence rather than a tight empirical operating margin. Under empirical channel conditions where the physics ramp activates ($g \to 1$), the penalty term $\kappa_\Lambda \mathbb{E}[1 - g]$ rapidly shrinks to zero.
+\end{remark}
+
+\begin{remark}[Relative Benchmark Framing]
+The performance floor is established relative to the specific analytical receiver $\bm{\ell}^A$ evaluated under identical channel estimation conditions. If the underlying channel estimator (e.g., LS) suffers from pilot contamination or severe Doppler degradation, $\bm{\ell}^A$ will itself exhibit elevated error rates; the hybrid receiver guarantees bounded departure from $\bm{\ell}^A$, not an unassisted genie-aided baseline.
+\end{remark}
+
+\end{document}
