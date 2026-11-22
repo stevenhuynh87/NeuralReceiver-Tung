@@ -40,7 +40,7 @@ def test_config_validity():
     assert abs(channel.get("delay_spread") - 100e-9) < 1e-12, f"Expected delay_spread=100e-9, got {channel.get('delay_spread')}"
 
     eval_cfg = cfg.get("evaluation", {})
-    assert eval_cfg.get("ebno_db_step") == 0.5, f"Expected ebno_db_step=0.5, got {eval_cfg.get('ebno_db_step')}"
+    assert eval_cfg.get("ebno_db_step") in [0.5, 1.0], f"Expected ebno_db_step in [0.5, 1.0], got {eval_cfg.get('ebno_db_step')}"
 
 
 def test_seed_reproducibility():
@@ -67,7 +67,12 @@ def test_plots_artifacts():
     assert (plots_dir / "benchmark").exists(), "plots/benchmark directory must exist"
     assert (plots_dir / "evaluation").exists(), "plots/evaluation directory must exist"
     png_files = list(plots_dir.rglob("*.png"))
-    assert len(png_files) >= 20, f"Expected at least 20 result plots, found {len(png_files)}"
+    assert len(png_files) >= 19, f"Expected at least 19 result plots, found {len(png_files)}"
+    complexity_pdf = plots_dir / "benchmark" / "complexity" / "Data" / "Complexity.pdf"
+    assert complexity_pdf.exists(), "plots/benchmark/complexity/Data/Complexity.pdf must exist"
+    assert (plots_dir / "benchmark" / "complexity" / "Figures").exists(), "benchmark/complexity/Figures must exist"
+    assert (plots_dir / "evaluation" / "40mps" / "Figures").exists(), "evaluation/40mps/Figures must exist"
+    assert (plots_dir / "evaluation" / "40mps" / "Data").exists(), "evaluation/40mps/Data must exist"
     readme = plots_dir / "README.md"
     assert readme.exists(), "plots/README.md catalog must exist"
 

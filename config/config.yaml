@@ -1,10 +1,13 @@
 # ==============================================================================
 # nrx-bounded: Single Source of Truth Configuration File (writing-as-code)
 # ==============================================================================
-# All PHY, channel, neural model, training, and evaluation parameters are
-# derived strictly from original notebook code, verified checkpoints, and
-# New Code updates (standardized 11-channel proposed model, 4-block CNN-ResNet,
-# AdamW with grad clipping, 97.2 m/s max mobility, and CDL-B/C/D training).
+# Aligned 100% with Thesis Folder - Core Data:
+# - Standardized 11-channel Proposed Axial Attention Neural Receiver
+# - 4-Residual-Block CNN-ResNet DeepRx Baseline
+# - Direct Batch Size 128 (430,000 iterations for 64-QAM)
+# - Alternating CDL-B, CDL-C, CDL-D multi-channel training
+# - Official pretrained weights: Axial & CNN ebno_0_20dB_speed_0_97ms_pilots_2-11
+# - Evaluation grid: Eb/N0 0-20 dB with step 1.0 dB across CDL-A, B, C, D, E
 
 seed: 42
 
@@ -13,9 +16,9 @@ phy:
   subcarrier_spacing: 30000.0          # 30 kHz (Hz)
   fft_size: 128                        # N_FFT (F dimension)
   num_ofdm_symbols: 14                 # T dimension
-  num_guard_carriers: [5, 6]           # [left guard, right guard] (num_guard_carriers)
+  num_guard_carriers: [5, 6]           # [left guard, right guard]
   guard_subcarriers: [5, 6]            # Alias for backward compatibility
-  dc_null: true                        # 1 DC subcarrier nulled
+  dc_null: true                        # 1 DC subcarrier nulled (subcarrier index 64)
   pilot_pattern: "kronecker"           # Kronecker pilot pattern
   pilot_ofdm_symbol_indices: [2, 11]   # Symbols containing pilots
   cyclic_prefix_length: 0              # Frequency-domain simulation
@@ -35,9 +38,9 @@ channel:
   speed: 0.0                           # Speed for evaluation and training [m/s]
   speed_1: 97.2                        # Max speed for training [m/s] (350 km/h)
   speed_min: 0.0                       # Alias for Sionna min_speed
-  speed_max: 97.2                      # Alias for Sionna max_speed (updated from New Code: 97.2 m/s)
+  speed_max: 97.2                      # Alias for Sionna max_speed (97.2 m/s = 350 km/h)
   min_speed: 0.0                       # Min speed for evaluation and training [m/s]
-  max_speed: 97.2                      # Max speed for evaluation and training [m/s] (350 km/h)
+  max_speed: 97.2                      # Max speed for evaluation and training [m/s]
   multi_channel_training: true         # Alternating training over CDL-B, CDL-C, CDL-D
   training_cdl_models: ["B", "C", "D"] # 1/3 uniform probability each during multi-channel training
   eval_cdl_models: ["A", "B", "C", "D", "E"] # Supported evaluation channels
@@ -51,44 +54,53 @@ models:
     num_layers_qpsk: 3                 # 3 factorized axial attention blocks (QPSK)
     dim_feedforward: 256               # FFN intermediate dimension (2 * d_model)
     dropout: 0.1
-    in_channels: 11                    # 11-channel concatenated tensor (Updated in New Code, removes redundant pilot mask)
+    in_channels: 11                    # 11-channel concatenated tensor (matches Core Data)
     legacy_in_channels: 12             # 12-channel with pilot mask (legacy support)
     max_time: 14                       # Max time dimension for 2D PosEnc
     max_freq: 128                      # Max freq dimension for 2D PosEnc
+    weights_path: "weights/Axial_ebno_0_20dB_speed_0_97ms_pilots_2-11"
   baseline_cnn:
     num_conv_channels: 128
-    num_blocks: 4                      # 4 residual convolutional blocks (Updated in New Code)
+    num_blocks: 4                      # 4 residual convolutional blocks (matches Core Data)
     legacy_num_blocks: 11              # 11 residual convolutional blocks (DeepRx legacy)
-    in_channels: 5                     # 5-channel concatenated tensor (D8 CNN: y_real, y_imag, no_log)
+    in_channels: 5                     # 5-channel concatenated tensor (y_real, y_imag, no_log)
+    weights_path: "weights/CNN_ebno_0_20dB_speed_0_97ms_pilots_2-11"
 
 training:
   optimizer: "AdamW"
   learning_rate: 0.0001                # 1e-4
   weight_decay: 0.0001                 # 1e-4
-  batch_size: 16                       # training_batch_size
-  training_batch_size: 16              # Alias for batch_size
-  gradient_accumulation_steps: 8       # accumulation_steps
-  effective_batch_size: 128            # 16 * 8 = 128
-  iterations: 430000                   # num_training_iterations (Updated in New Code: 430,000 for 64-QAM over CDL C/D)
+  batch_size: 128                      # training_batch_size in Core Data
+  training_batch_size: 128             # Alias for batch_size
+  gradient_accumulation_steps: 1       # Direct batch_size 128
+  effective_batch_size: 128            # 128
+  iterations: 430000                   # num_training_iterations in Core Data
   legacy_iterations: 100000            # Legacy 100k iterations
-  grad_clip_norm: 1.0                  # Gradient clipping max_norm (Updated in New Code: clip_grad_norm_ max_norm=1.0)
+  grad_clip_norm: 1.0                  # Gradient clipping max_norm = 1.0
   ebno_db_min: 0.0                     # Min Eb/N0 in training
   ebno_db_max: 20.0                    # Max Eb/N0 in training
   device: "cuda"
   drive_dir: "/content/drive/MyDrive/Thesis_Checkpoints"
+  model_weights_path: "ebno_0_20dB_speed_0_97ms_pilots_2-11"
 
 paths:
+  weights_dir: "weights"
+  results_dir: "plots"
   plots_dir: "plots"
 
 evaluation:
   cdl_model: "C"                       # Default evaluation channel
   eval_speed: 40.0                     # Default evaluation speed [m/s] (144 km/h)
+  eval_speeds: [40.0, 97.2, 136.0]     # Evaluated mobility speeds in Core Data
   ebno_db_min: 0.0
   ebno_db_max: 20.0
-  ebno_db_step: 0.5                    # np.arange(0, 20, 0.5)
+  ebno_db_step: 1.0                    # np.arange(0, 21, 1.0) matching Core Data
   batch_size: 128
   num_target_block_errors: 100
   max_mc_iter: 1000
   target_bler: 0.0001
   plots_dir: "plots"
+  results_dir: "plots"
   save_plots: true
+  save_json: true
+  results_filename: "BLER_CDL_{channel_name}_{min_speed:.0f}ms_Compare"

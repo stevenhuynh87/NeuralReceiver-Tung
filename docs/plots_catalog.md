@@ -1,9 +1,9 @@
-# Danh mục Tra cứu Toàn diện Đồ thị Kết quả Luận văn (`docs/plots_catalog.md`)
+# Danh mục Tra cứu Toàn diện Đồ thị & Dữ liệu Kết quả Luận văn (`docs/plots_catalog.md`)
 
-Tài liệu này đóng vai trò Single Source Catalog đối soát toàn bộ 20 đồ thị và bảng biểu kết quả trong Chương VI (CHAPTER VI - RESULTS) của Luận văn:  
-`Storage/Senior-Project-Report(Design Specification AI fabrication).docx`.
+Tài liệu này là Single Source Catalog đối soát toàn bộ kết quả đánh giá thực nghiệm (23 đồ thị & biểu đồ PNG, 19 tệp dữ liệu số JSON, 1 báo cáo độ phức tạp PDF, 1 tài liệu ghi chú DOCX) được đồng bộ hóa và phân loại chính xác 100% từ **`Thesis Folder - Core Data`**.
 
-Toàn bộ 20 hình ảnh đã được chuẩn hóa tên tệp để **phân biệt rõ ràng từng mô hình máy thu nơ-ron (Neural Receiver Architecture)** và sắp xếp vào các thư mục phân loại trong [`plots/`](file:///C:/Users/thanh/Documents/antigravity/Thesis%20Folder/Working/nrx-bounded/plots/).
+> [!NOTE]
+> Thư mục `\results` đã hoàn toàn được dọn dẹp và thay thế bởi [`plots/`](file:///c:/Users/thanh/Documents/Antigravity/Thesis%20Folder/Working/nrx-bounded/plots/). Tất cả đồ thị `.png` được gom vào thư mục con `Figures/`, và tất cả dữ liệu số `.json`, tài liệu `.docx`, `.pdf` được gom vào thư mục con `Data/`.
 
 ---
 
@@ -11,88 +11,102 @@ Toàn bộ 20 hình ảnh đã được chuẩn hóa tên tệp để **phân bi
 
 ```text
 plots/
+├── README.md                                        # Hướng dẫn và bảng tóm tắt danh mục
 ├── benchmark/
-│   ├── complexity/
-│   │   ├── fig19_complexity_baseline_rescnn_qpsk.png
-│   │   └── fig20_complexity_proposed_axial_transformer_qpsk.png
-│   └── resnet11_vs_proposed/
-│       └── fig30_31_benchmark_resnet11_vs_proposed.png
+│   └── complexity/
+│       ├── Figures/                                 # 4 trang đồ thị / báo cáo PNG độ phân giải cao tách từ Complexity.pdf
+│       │   ├── Complexity_page_1_A100.png           # Profiling trên NVIDIA A100-SXM4-40GB
+│       │   ├── Complexity_page_2_L4.png             # Profiling trên NVIDIA L4
+│       │   ├── Complexity_page_3_T4.png             # Profiling trên Tesla T4
+│       │   └── Complexity_page_4_K1200.png          # Profiling trên Quadro K1200
+│       └── Data/
+│           └── Complexity.pdf                       # Tệp PDF gốc lưu trữ kết quả benchmark
 └── evaluation/
-    ├── sec6_1_1_minimal_4qam_r05_train10mps_test10mps/
-    │   ├── cdl_a/
-    │   │   ├── fig11_cdl_a_baseline_rescnn_qpsk_r05_10mps.png
-    │   │   └── fig12_cdl_a_proposed_axial_transformer_qpsk_r05_10mps.png
-    │   ├── cdl_b/
-    │   │   ├── fig13_cdl_b_baseline_rescnn_qpsk_r05_10mps.png
-    │   │   └── fig14_cdl_b_proposed_axial_transformer_qpsk_r05_10mps.png
-    │   ├── cdl_c/
-    │   │   ├── fig15_cdl_c_baseline_rescnn_qpsk_r05_10mps.png
-    │   │   └── fig16_cdl_c_proposed_axial_transformer_qpsk_r05_10mps.png
-    │   └── cdl_d/
-    │       ├── fig17_cdl_d_baseline_rescnn_qpsk_r05_10mps.png
-    │       └── fig18_cdl_d_proposed_axial_transformer_qpsk_r05_10mps.png
-    ├── sec6_1_2_train_speed_0mps_64qam_r09/
-    │   ├── cdl_a/
-    │   │   └── fig22_cdl_a_rescnn_vs_proposed_axial_64qam_r09_train0mps_test10mps.png
-    │   ├── cdl_c/
-    │   │   ├── fig21_cdl_c_proposed_axial_transformer_64qam_r09_train0mps_test97mps.png
-    │   │   ├── fig23_cdl_c_rescnn_vs_proposed_axial_64qam_r09_train0mps_test10mps.png
-    │   │   └── fig24_cdl_c_rescnn_vs_proposed_axial_64qam_r09_train0mps_test40mps.png
-    │   └── cdl_d/
-    │       ├── fig25_cdl_d_rescnn_vs_proposed_axial_64qam_r09_train0mps_test10mps.png
-    │       └── fig26_cdl_d_rescnn_vs_proposed_axial_64qam_r09_train0mps_test40mps.png
-    └── sec6_1_3_train_speed_10mps_64qam_r09/
-        ├── cdl_a/
-        │   └── fig27_cdl_a_proposed_axial_transformer_64qam_r09_train10mps_test10mps.png
-        ├── cdl_c/
-        │   └── fig28_cdl_c_proposed_axial_transformer_64qam_r09_train10mps_test10mps.png
-        └── cdl_d/
-            └── fig29_cdl_d_proposed_axial_transformer_64qam_r09_train10mps_test10mps.png
+    ├── 40mps/                                      # Vận tốc 40 m/s (144 km/h), Pilot chuẩn [2, 11]
+    │   ├── Figures/
+    │   │   ├── BLER_CDL_A_40ms_Compare.png
+    │   │   ├── BLER_CDL_B_40ms_Compare.png
+    │   │   ├── BLER_CDL_C_40ms_Compare.png
+    │   │   ├── BLER_CDL_D_40ms_Compare.png
+    │   │   └── BLER_CDL_E_40ms_Compare.png
+    │   └── Data/
+    │       ├── BLER_CDL_A_40ms_Compare.json
+    │       ├── BLER_CDL_B_40ms_Compare.json
+    │       ├── BLER_CDL_C_40ms_Compare.json
+    │       ├── BLER_CDL_D_40ms_Compare.json
+    │       └── BLER_CDL_E_40ms_Compare.json
+    ├── 97mps/                                      # Vận tốc 97.2 m/s (350 km/h - Đường sắt cao tốc HSR), Pilot [2, 11]
+    │   ├── Figures/
+    │   │   ├── BLER_CDL_A_97ms_Compare.png
+    │   │   ├── BLER_CDL_B_97ms_Compare.png
+    │   │   ├── BLER_CDL_C_97ms_Compare.png
+    │   │   ├── BLER_CDL_D_97ms_Compare.png
+    │   │   └── BLER_CDL_E_97ms_Compare.png
+    │   └── Data/
+    │       ├── BLER_CDL_A_97.2ms_Compare.json / BLER_CDL_A_97ms_Compare.json
+    │       ├── BLER_CDL_B_97.2ms_Compare.json / BLER_CDL_B_97ms_Compare.json
+    │       ├── BLER_CDL_C_97.2ms_Compare.json / BLER_CDL_C_97ms_Compare.json
+    │       ├── BLER_CDL_D_97.2ms_Compare.json / BLER_CDL_D_97ms_Compare.json
+    │       ├── BLER_CDL_E_97.2ms_Compare.json / BLER_CDL_E_97ms_Compare.json
+    │       └── New Tài liệu Microsoft Word.docx
+    ├── 136mps/                                     # Vận tốc cực hạn 136 m/s (490 km/h - Maglev), Pilot [2, 11]
+    │   ├── Figures/
+    │   │   ├── BLER_CDL_A_136ms_Compare.png
+    │   │   ├── BLER_CDL_B_136ms_Compare.png
+    │   │   ├── BLER_CDL_C_136ms_Compare.png
+    │   │   ├── BLER_CDL_D_136ms_Compare.png
+    │   │   └── BLER_CDL_E_136ms_Compare.png
+    │   └── Data/
+    └── uncompatible_pilots/                         # Stress-test với cấu hình Pilot không tương thích
+        ├── pilot_2/                                # Chỉ 1 ký hiệu Pilot ở Symbol 2 (v=10 m/s)
+        │   ├── Figures/
+        │   │   ├── BLER_CDL_A_10ms_Compare.png
+        │   │   └── BLER_CDL_E_10ms_Compare.png
+        │   └── Data/
+        │       ├── BLER_CDL_E_10.0ms_Compare.json
+        │       └── BLER_CDL_E_10ms_Compare.json
+        └── pilot_2_5_8_11/                         # 4 ký hiệu Pilot ở [2, 5, 8, 11] (v=30 m/s)
+            ├── Figures/
+            │   ├── BLER_CDL_A_30ms_Compare.png
+            │   └── BLER_CDL_E_30ms_Compare.png
+            └── Data/
+                ├── BLER_CDL_E_30.0ms_Compare.json
+                └── BLER_CDL_E_30ms_Compare.json
 ```
 
 ---
 
-## 2. Bảng đối chiếu chi tiết 20 hình ảnh Results
+## 2. Bảng đối chiếu chi tiết 19 đồ thị BLER từ Core Data
 
-| STT | Media ID DOCX | Số hiệu & Caption trong Luận văn | Đường dẫn tương đối chuẩn hóa trong `plots/` | Mô hình CDL | Điều chế & R | Vận tốc Train $\rightarrow$ Test | Mô hình Neural Receiver được đánh giá |
-|:---:|:---|:---|:---|:---:|:---:|:---:|:---|
-| 1 | `image15.png` | **Figure 11**: CDL-A baseline | `evaluation/sec6_1_1_minimal_4qam_r05_train10mps_test10mps/cdl_a/fig11_cdl_a_baseline_rescnn_qpsk_r05_10mps.png` | **CDL-A** | QPSK, R=0.5 | 10 m/s $\rightarrow$ 10 m/s | **DeepRx ResCNN** (Baseline n=4) |
-| 2 | `image16.png` | **Figure 12**: CDL-A proposed | `evaluation/sec6_1_1_minimal_4qam_r05_train10mps_test10mps/cdl_a/fig12_cdl_a_proposed_axial_transformer_qpsk_r05_10mps.png` | **CDL-A** | QPSK, R=0.5 | 10 m/s $\rightarrow$ 10 m/s | **Axial Transformer** (Proposed N=3) |
-| 3 | `image17.png` | **Figure 13**: CDL-B baseline | `evaluation/sec6_1_1_minimal_4qam_r05_train10mps_test10mps/cdl_b/fig13_cdl_b_baseline_rescnn_qpsk_r05_10mps.png` | **CDL-B** | QPSK, R=0.5 | 10 m/s $\rightarrow$ 10 m/s | **DeepRx ResCNN** (Baseline n=4) |
-| 4 | `image18.png` | **Figure 14**: CDL-B proposed | `evaluation/sec6_1_1_minimal_4qam_r05_train10mps_test10mps/cdl_b/fig14_cdl_b_proposed_axial_transformer_qpsk_r05_10mps.png` | **CDL-B** | QPSK, R=0.5 | 10 m/s $\rightarrow$ 10 m/s | **Axial Transformer** (Proposed N=3) |
-| 5 | `image19.png` | **Figure 15**: CDL-C baseline | `evaluation/sec6_1_1_minimal_4qam_r05_train10mps_test10mps/cdl_c/fig15_cdl_c_baseline_rescnn_qpsk_r05_10mps.png` | **CDL-C** | QPSK, R=0.5 | 10 m/s $\rightarrow$ 10 m/s | **DeepRx ResCNN** (Baseline n=4) |
-| 6 | `image20.png` | **Figure 16**: CDL-C proposed | `evaluation/sec6_1_1_minimal_4qam_r05_train10mps_test10mps/cdl_c/fig16_cdl_c_proposed_axial_transformer_qpsk_r05_10mps.png` | **CDL-C** | QPSK, R=0.5 | 10 m/s $\rightarrow$ 10 m/s | **Axial Transformer** (Proposed N=3) |
-| 7 | `image21.png` | **Figure 17**: CDL-D baseline | `evaluation/sec6_1_1_minimal_4qam_r05_train10mps_test10mps/cdl_d/fig17_cdl_d_baseline_rescnn_qpsk_r05_10mps.png` | **CDL-D** | QPSK, R=0.5 | 10 m/s $\rightarrow$ 10 m/s | **DeepRx ResCNN** (Baseline n=4) |
-| 8 | `image22.png` | **Figure 18**: CDL-D proposed | `evaluation/sec6_1_1_minimal_4qam_r05_train10mps_test10mps/cdl_d/fig18_cdl_d_proposed_axial_transformer_qpsk_r05_10mps.png` | **CDL-D** | QPSK, R=0.5 | 10 m/s $\rightarrow$ 10 m/s | **Axial Transformer** (Proposed N=3) |
-| 9 | `image23.png` | **Figure 19**: Baseline Model Complexity | `benchmark/complexity/fig19_complexity_baseline_rescnn_qpsk.png` | N/A | QPSK | N/A | **DeepRx ResCNN** (Space Complexity) |
-| 10 | `image24.png` | **Figure 20**: Proposed Model Complexity | `benchmark/complexity/fig20_complexity_proposed_axial_transformer_qpsk.png` | N/A | QPSK | N/A | **Axial Transformer** (Space Complexity) |
-| 11 | `image25.png` | **Figure 21**: 64-QAM, R=0.9, 97.2 m/s, CDL-C | `evaluation/sec6_1_2_train_speed_0mps_64qam_r09/cdl_c/fig21_cdl_c_proposed_axial_transformer_64qam_r09_train0mps_test97mps.png` | **CDL-C** | 64-QAM, R=0.9 | 0 m/s $\rightarrow$ 97.2 m/s | **Axial Transformer** (Proposed Extreme Robustness) |
-| 12 | `image26.png` | **Figure 22**: 64-QAM, R=0.9, 10 m/s, CDL-A | `evaluation/sec6_1_2_train_speed_0mps_64qam_r09/cdl_a/fig22_cdl_a_rescnn_vs_proposed_axial_64qam_r09_train0mps_test10mps.png` | **CDL-A** | 64-QAM, R=0.9 | 0 m/s $\rightarrow$ 10 m/s | **Đối sánh ResCNN vs Proposed Axial** |
-| 13 | `image27.png` | **Figure 23**: 64-QAM, R=0.9, 10 m/s, CDL-C | `evaluation/sec6_1_2_train_speed_0mps_64qam_r09/cdl_c/fig23_cdl_c_rescnn_vs_proposed_axial_64qam_r09_train0mps_test10mps.png` | **CDL-C** | 64-QAM, R=0.9 | 0 m/s $\rightarrow$ 10 m/s | **Đối sánh ResCNN vs Proposed Axial** |
-| 14 | `image28.png` | **Figure 24**: 64-QAM, R=0.9, 40 m/s, CDL-C | `evaluation/sec6_1_2_train_speed_0mps_64qam_r09/cdl_c/fig24_cdl_c_rescnn_vs_proposed_axial_64qam_r09_train0mps_test40mps.png` | **CDL-C** | 64-QAM, R=0.9 | 0 m/s $\rightarrow$ 40 m/s | **Đối sánh ResCNN vs Proposed Axial** |
-| 15 | `image29.png` | **Figure 25**: 64-QAM, R=0.9, 10 m/s, CDL-D | `evaluation/sec6_1_2_train_speed_0mps_64qam_r09/cdl_d/fig25_cdl_d_rescnn_vs_proposed_axial_64qam_r09_train0mps_test10mps.png` | **CDL-D** | 64-QAM, R=0.9 | 0 m/s $\rightarrow$ 10 m/s | **Đối sánh ResCNN vs Proposed Axial** |
-| 16 | `image30.png` | **Figure 26**: 64-QAM, R=0.9, 40 m/s, CDL-D | `evaluation/sec6_1_2_train_speed_0mps_64qam_r09/cdl_d/fig26_cdl_d_rescnn_vs_proposed_axial_64qam_r09_train0mps_test40mps.png` | **CDL-D** | 64-QAM, R=0.9 | 0 m/s $\rightarrow$ 40 m/s | **Đối sánh ResCNN vs Proposed Axial** |
-| 17 | `image31.png` | **Figure 27**: 64-QAM, R=0.9, 10 m/s, CDL-A | `evaluation/sec6_1_3_train_speed_10mps_64qam_r09/cdl_a/fig27_cdl_a_proposed_axial_transformer_64qam_r09_train10mps_test10mps.png` | **CDL-A** | 64-QAM, R=0.9 | 10 m/s $\rightarrow$ 10 m/s | **Axial Transformer** (Proposed Model Focusing) |
-| 18 | `image32.png` | **Figure 28**: 64-QAM, R=0.9, 10 m/s, CDL-C | `evaluation/sec6_1_3_train_speed_10mps_64qam_r09/cdl_c/fig28_cdl_c_proposed_axial_transformer_64qam_r09_train10mps_test10mps.png` | **CDL-C** | 64-QAM, R=0.9 | 10 m/s $\rightarrow$ 10 m/s | **Axial Transformer** (Proposed Model Focusing) |
-| 19 | `image33.png` | **Figure 29**: 64-QAM, R=0.9, 10 m/s, CDL-D | `evaluation/sec6_1_3_train_speed_10mps_64qam_r09/cdl_d/fig29_cdl_d_proposed_axial_transformer_64qam_r09_train10mps_test10mps.png` | **CDL-D** | 64-QAM, R=0.9 | 10 m/s $\rightarrow$ 10 m/s | **Axial Transformer** (Proposed Model Focusing) |
-| 20 | `image34.png` | **Figure 30 & 31**: ResNet-11 & Proposed Benchmark | `benchmark/resnet11_vs_proposed/fig30_31_benchmark_resnet11_vs_proposed.png` | **Tất cả CDL** | 64-QAM, R=0.9 | Đa tốc độ (0, 10, 40, 97 m/s) | **Đối chuẩn toàn diện: ResNet-11 vs Proposed** |
+| STT | Tên tệp Đồ thị (`Figures/`) | Tệp Dữ liệu số (`Data/`) | Mô hình Kênh | Vận tốc Đánh giá | Cấu hình Pilot | Bộ thu đối sánh |
+|:---:|:---|:---|:---:|:---:|:---:|:---|
+| 1 | `BLER_CDL_A_40ms_Compare.png` | `BLER_CDL_A_40ms_Compare.json` | **CDL-A** | 40 m/s (144 km/h) | `[2, 11]` | LS, LMMSE, ResCNN (Baseline), Axial Transformer (Proposed) |
+| 2 | `BLER_CDL_B_40ms_Compare.png` | `BLER_CDL_B_40ms_Compare.json` | **CDL-B** | 40 m/s (144 km/h) | `[2, 11]` | LS, LMMSE, ResCNN (Baseline), Axial Transformer (Proposed) |
+| 3 | `BLER_CDL_C_40ms_Compare.png` | `BLER_CDL_C_40ms_Compare.json` | **CDL-C** | 40 m/s (144 km/h) | `[2, 11]` | LS, LMMSE, ResCNN (Baseline), Axial Transformer (Proposed) |
+| 4 | `BLER_CDL_D_40ms_Compare.png` | `BLER_CDL_D_40ms_Compare.json` | **CDL-D** | 40 m/s (144 km/h) | `[2, 11]` | LS, LMMSE, ResCNN (Baseline), Axial Transformer (Proposed) |
+| 5 | `BLER_CDL_E_40ms_Compare.png` | `BLER_CDL_E_40ms_Compare.json` | **CDL-E** | 40 m/s (144 km/h) | `[2, 11]` | LS, LMMSE, ResCNN (Baseline), Axial Transformer (Proposed) |
+| 6 | `BLER_CDL_A_97ms_Compare.png` | `BLER_CDL_A_97ms_Compare.json` | **CDL-A** | 97.2 m/s (350 km/h) | `[2, 11]` | LS, LMMSE, ResCNN (Baseline), Axial Transformer (Proposed) |
+| 7 | `BLER_CDL_B_97ms_Compare.png` | `BLER_CDL_B_97ms_Compare.json` | **CDL-B** | 97.2 m/s (350 km/h) | `[2, 11]` | LS, LMMSE, ResCNN (Baseline), Axial Transformer (Proposed) |
+| 8 | `BLER_CDL_C_97ms_Compare.png` | `BLER_CDL_C_97ms_Compare.json` | **CDL-C** | 97.2 m/s (350 km/h) | `[2, 11]` | LS, LMMSE, ResCNN (Baseline), Axial Transformer (Proposed) |
+| 9 | `BLER_CDL_D_97ms_Compare.png` | `BLER_CDL_D_97ms_Compare.json` | **CDL-D** | 97.2 m/s (350 km/h) | `[2, 11]` | LS, LMMSE, ResCNN (Baseline), Axial Transformer (Proposed) |
+| 10 | `BLER_CDL_E_97ms_Compare.png` | `BLER_CDL_E_97ms_Compare.json` | **CDL-E** | 97.2 m/s (350 km/h) | `[2, 11]` | LS, LMMSE, ResCNN (Baseline), Axial Transformer (Proposed) |
+| 11 | `BLER_CDL_A_136ms_Compare.png` | N/A | **CDL-A** | 136 m/s (490 km/h) | `[2, 11]` | LS, LMMSE, ResCNN (Baseline), Axial Transformer (Proposed) |
+| 12 | `BLER_CDL_B_136ms_Compare.png` | N/A | **CDL-B** | 136 m/s (490 km/h) | `[2, 11]` | LS, LMMSE, ResCNN (Baseline), Axial Transformer (Proposed) |
+| 13 | `BLER_CDL_C_136ms_Compare.png` | N/A | **CDL-C** | 136 m/s (490 km/h) | `[2, 11]` | LS, LMMSE, ResCNN (Baseline), Axial Transformer (Proposed) |
+| 14 | `BLER_CDL_D_136ms_Compare.png` | N/A | **CDL-D** | 136 m/s (490 km/h) | `[2, 11]` | LS, LMMSE, ResCNN (Baseline), Axial Transformer (Proposed) |
+| 15 | `BLER_CDL_E_136ms_Compare.png` | N/A | **CDL-E** | 136 m/s (490 km/h) | `[2, 11]` | LS, LMMSE, ResCNN (Baseline), Axial Transformer (Proposed) |
+| 16 | `BLER_CDL_A_10ms_Compare.png` | N/A | **CDL-A** | 10 m/s | `[2]` | Incompatible pilot pattern testing |
+| 17 | `BLER_CDL_E_10ms_Compare.png` | `BLER_CDL_E_10ms_Compare.json` | **CDL-E** | 10 m/s | `[2]` | Incompatible pilot pattern testing |
+| 18 | `BLER_CDL_A_30ms_Compare.png` | N/A | **CDL-A** | 30 m/s | `[2, 5, 8, 11]` | Incompatible pilot pattern testing |
+| 19 | `BLER_CDL_E_30ms_Compare.png` | `BLER_CDL_E_30ms_Compare.json` | **CDL-E** | 30 m/s | `[2, 5, 8, 11]` | Incompatible pilot pattern testing |
 
 ---
 
-## 3. Tiêu chí phân loại 5 chiều
+## 3. Đối chuẩn độ phức tạp tính toán (Complexity)
 
-1. **Kiến trúc Neural Receiver**:
-   - **`baseline_rescnn`**: Mạng tích chập phần dư DeepRx ResCNN.
-   - **`proposed_axial_transformer`**: Mạng nơ-ron kết hợp LMMSE-assisted Axial Transformer.
-   - **`rescnn_vs_proposed_axial`**: Đồ thị đối sánh 2 kiến trúc máy thu nơ-ron.
-2. **Phân hệ Mục đích**:
-   - **`benchmark/`**: Đối chuẩn độ phức tạp mô hình (tham số, FLOPs, bộ nhớ, độ trễ).
-   - **`evaluation/`**: Đánh giá độ tin cậy thu nhận tín hiệu thông qua đường cong BLER theo $E_b/N_0$.
-3. **Môi trường kênh CDL**:
-   - **CDL-A, B, C, D**: Tương ứng 4 mô hình truyền sóng chuẩn hóa của 3GPP TR 38.901.
-4. **Loại Điều chế & Coderate**:
-   - **4-QAM (QPSK), $R = 0.5$** (Figures 11–20).
-   - **64-QAM, $R = 0.9$** (Figures 21–31).
-5. **Mối quan hệ Vận tốc**:
-   - **In-distribution**: Train 10 m/s = Test 10 m/s (Figures 11–18, 27–29).
-   - **Out-of-distribution**: Train 0 m/s $\rightarrow$ Test 10, 40, 97.2 m/s (Figures 21–26).
+- **`benchmark/complexity/Figures/`**:
+  - `Complexity_page_1_A100.png`: Đo kiểm trên NVIDIA A100-SXM4-40GB.
+  - `Complexity_page_2_L4.png`: Đo kiểm trên NVIDIA L4.
+  - `Complexity_page_3_T4.png`: Đo kiểm trên Tesla T4.
+  - `Complexity_page_4_K1200.png`: Đo kiểm trên Quadro K1200.
+- **`benchmark/complexity/Data/Complexity.pdf`**: Tệp văn bản đối chuẩn gốc chi tiết về Space, Computational (FLOPs), và Time Complexity (Latency/Throughput).
